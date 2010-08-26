@@ -146,6 +146,13 @@ chrome.experimental.omnibox.onInputChanged.addListener(
       }
     }
     
+    for(var i = 0, l =matches.length; i < l; i++){
+      matches.push({ //fallback
+        content: matches[i].content,
+        description: matches[i].description
+      })
+    }
+    
     suggest(matches);
   });
 
