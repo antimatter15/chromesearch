@@ -74,9 +74,17 @@
             }
             sr.innerHTML += '<a href="'+data[i].content+'" onclick="issue(event, this.href)" target="_blank"><div class="result"><span class="title">'+data[i].file+'</span>: <span class="desc">'+des+'</span></div></a>'
           }
+          
+          if(data.length == 0){
+            sr.innerHTML += 'No Results Found'
+          }
         });
       }
       
     </script>
+    <p style='font-size:x-small'>
+    Created by <a href='http://antimatter15.com'>antimatter15</a>. <a href='http://twitter.com/antimatter15'>@antimatter15</a>
+    Source Code at <a href='http://github.com/antimatter15/chromesearch'>github</a>
+    </p>
   </body>
 </html>
