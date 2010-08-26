@@ -1,0 +1,19 @@
+{
+   "background_page": "background.html",
+   "content_scripts": [ {
+      "js": [ "indexer.js" ],
+      "matches": [ "file://*" ]
+   } ],
+   "description": "Desktop Search Engine.",
+   "icons": {
+     "16": "edit-find16.png",
+     "32": "edit-find32.png",
+     "48": "edit-find48.png",
+     "128": "edit-find128.png"
+   },
+   "minimum_chrome_version": "6",
+   "name": "Desktop Search",
+   "permissions": [ "tabs", "unlimited_storage", "experimental" ],
+   "omnibox_keyword": "fs",
+   "version": "1.0"
+}

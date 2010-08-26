@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+
+  <style id="Infobar">
+  body {
+    font-family: Segoe UI, Tahoma, sans-serif;
+    font-size: 11px;
+    height: 36px; /* Infobars are limited to 36-72px */
+    margin: 0px;
+    overflow: hidden;
+  }
+  
+  table {
+    height: 36px;
+  }
+  </style>
+  
+  </head>
+  <body>
+    
+  <div style="float:right">
+    <table>
+    <tr>
+    <td>
+    <button onclick="chrome.extension.sendRequest({action:'doIndex',tabId:parseInt(location.search.substr(1))});window.close();">Index this folder</button>
+    </td>
+    <td>
+    </tr>
+    
+  </table>
+  </div>
+    
+    <table>
+    <tr>
+    <td>
+    <img src="edit-find32.png">
+    </td>
+    <td>
+    Do you want to index this folder so it can be searched? <a target="_blank" href="#">Learn more</a>
+    </td>
+    </tr>
+    
+  </table>
+
+  </body>
+</html>
+

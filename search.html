@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Desktop Search</title>
+    <style>
+      body {
+        font-family: sans-serif, helvetica;
+        background: url(edit-find128.png);
+        background-repeat: no-repeat;
+        padding-left: 140px;
+      }
+      
+      #search_results a {
+        text-decoration: none;
+      }
+      .result {
+        min-height: 50px;
+        padding-left: 20px;
+        background: url(edit-find16.png);
+        background-repeat: no-repeat;
+        margin: 5px;
+      }
+      
+      a:visited .result .title {
+        color: #137B07;
+      }
+      
+      a .result .title {
+        color: green;
+      }
+      
+      .result .desc {
+        color: black;
+      }
+      
+      .result:hover {
+        background-color: #EEF1F9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chrome Desktop Search</h1>
+    <p>
+      Hello. This is a <b>search engine for local files</b> made for Chrome. It's a <b>proof of concept</b> more than anything else.
+      It's possible because of several <a href='http://code.google.com/chrome/extensions/beta/whats_new.html'>new features</a> in Chrome 6.0. 
+      The ability to access file:/// URLs is a big one. It uses the <a href='http://code.google.com/chrome/extensions/beta/experimental.infobars.html'>Infobars API</a>
+      for messages. The <a href='http://code.google.com/chrome/extensions/beta/experimental.omnibox.html'>Omnibox</a> is used as the main search interface.
+    </p>
+    <p>
+      <h2>How to use</h2>
+      <ol>
+        <li>First, you need to <b>navigate to a file:///</b> URL through Chrome and press the infobar button to crawl it. This depends on the operating system.</li>
+        <li>Now, you just have to type stuff in the omnibox to search. <b>Prefix your queries</b> with "fs " and observe the magic</li>
+      </ol>
+    </p>
+    <div id='search_results'></div>
+    <script>
+      function issue(event ,link){
+      console.log(event.clipboardData);
+        alert("Due to a weird technical issue, I can't link to a local resource. In the mean time, please copy and paste the following text into your URL bar: \n"+link)
+      }
+      if(location.search.length > 1){
+        var query = unescape(location.search.substr(1));
+        var sr = document.getElementById('search_results');
+        var qs = query.split(' ');
+        sr.innerHTML += '<h2>Search Results for "'+query+'"</h2>'
+        chrome.extension.sendRequest({action:'search', query: query}, function(data){
+          for(var i = 0; i < data.length; i++){
+            var des = data[i].description;
+            for(var k = 0; k < qs.length; k++){
+              des = des.replace(new RegExp(qs[k],'ig'), function(a){
+                return '<b>'+a+'</b>';
+              })
+            }
+            sr.innerHTML += '<a href="'+data[i].content+'" onclick="issue(event, this.href)" target="_blank"><div class="result"><span class="title">'+data[i].file+'</span>: <span class="desc">'+des+'</span></div></a>'
+          }
+        });
+      }
+      
+    </script>
+  </body>
+</html>

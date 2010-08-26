@@ -1,0 +1,167 @@
+<script>
+var is_folder = /\/$/;
+var index = {};
+var crawledFolders = [];
+var folderQueue = [];
+
+function buildIndex(fileName){
+  index[unescape(fileName)] = fileName;
+  /*
+  var cmp = unescape(fileName).split('/');
+  for(var l = cmp.length; l--;){
+    var component = cmp[l];
+    if(component == 'file' || !component) continue;
+    if(component in index){
+      index[component].push(fileName);
+    }else{
+      index[component] = [fileName]
+    }
+  }
+  //*/
+}
+
+chrome.extension.onRequest.addListener(function(request, sender, callback){
+  if(request.action == 'showInfobar'){
+    console.log(sender);
+    //chrome.tabs.getSelected(null, function(tab){console.log(tab.id)})
+    chrome.experimental.infobars.show({tabId: sender.tab.id, path: 'infobar.html?'+sender.tab.id})
+    return;
+  }else if(request.action == 'doIndex'){
+    console.log('YAY DO INDEX STUFF',sender,request.tabId);
+    chrome.tabs.sendRequest(request.tabId, {action: 'doIndex'})
+    return;
+  }else if(request.action == 'search'){
+  
+    var matches = [];
+    var text = request.query;
+    var comp = text.split(' ').map(function(src){
+      return new RegExp(src,'i')
+    }), l = comp.length;
+    for(var el in index){
+      for(var i = l; i-- && comp[i].test(el);){}
+      if(i == -1 && index[el] && el.split('/').slice(-1)[0]){
+        matches.push({
+          content: index[el],
+          description: el,
+          file: el.split('/').slice(-1)[0]
+        });
+      }
+    }
+    callback(matches);
+    return;
+  }
+  var files = request.files;
+  if(!files || !files.length) return;
+  console.log('got files',files.length);
+  var date = +new Date; //index time
+  //*
+  for(var i = files.length; i--;){
+    var file = files[i];
+    localStorage[file] = date;
+    buildIndex(file);
+    if(is_folder.test(file) && crawledFolders.indexOf(file) == -1){
+      folderQueue.push(file);
+    }
+  }
+  //*/
+  var next = folderQueue.shift();
+
+  console.log('next in line',next);
+
+  if(next){
+      crawledFolders.push(next);
+      callback({
+          next: next,
+          done: crawledFolders.length,
+          todo: folderQueue.length
+        });
+  }else{
+    callback({
+      done: crawledFolders.length,
+      todo: folderQueue.length
+    });
+  }
+});
+
+for(var l = localStorage.length; l--;){
+  buildIndex(localStorage.key(l));
+}
+
+
+
+
+
+chrome.experimental.omnibox.onInputChanged.addListener(
+  function(text, suggest) {
+    console.log('inputChanged: ' + text);
+    var matches = [];
+    var comp = text.split(' ').map(function(src){
+      return new RegExp(src,'i')
+    }), l = comp.length;
+    for(var el in index){
+      for(var i = l; i-- && comp[i].test(el);){}
+      if(i == -1 && index[el] && el.split('/').slice(-1)[0]){
+        //matches.push({
+        //  content: index[el],
+        //  description: el.split('/').slice(-1)[0]
+        //})
+        
+        var file = el.split('/').slice(-1)[0];
+        var description = el;
+        
+        var predesc = file + ': '
+       
+        var descriptionStyles = [
+            chrome.experimental.omnibox.styleUrl(0),
+            chrome.experimental.omnibox.styleNone(file.length),
+        ]
+        
+        var stylePos = []
+        for(var i = l; i--;){
+          
+          var m = el.match(comp[i])[0];
+          //console.log(m);
+          stylePos.push({
+            index: description.indexOf(m),
+            length: m.length
+          });
+        }
+        stylePos.sort(function(b,a){return a.index - b.index})
+        for(var i = l; i--;){
+          //console.log(stylePos[i].index);
+          descriptionStyles.push(
+            chrome.experimental.omnibox.styleMatch(predesc.length + stylePos[i].index),
+            chrome.experimental.omnibox.styleNone(predesc.length + stylePos[i].index+stylePos[i].length));
+        }
+        
+        
+        matches.push({
+          content: index[el],
+          description: predesc + description,
+          descriptionStyles: descriptionStyles,
+        });
+        
+        console.log('match',el);
+        if(matches.length > 6) break;
+      }
+    }
+    
+    suggest(matches);
+  });
+
+
+
+chrome.experimental.omnibox.onInputEntered.addListener(
+  function(text) {
+    if(text.indexOf('file:') == 0){
+      chrome.tabs.getSelected(null, function(tab) {
+        chrome.tabs.update(tab.id, {url: text});
+      });
+    }else{
+      chrome.tabs.getSelected(null, function(tab) {
+        chrome.tabs.update(tab.id, {url: '/search.html?'+text});
+      });
+    }
+  }
+);
+</script>
