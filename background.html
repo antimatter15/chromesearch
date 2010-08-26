@@ -127,11 +127,16 @@ chrome.experimental.omnibox.onInputChanged.addListener(
           });
         }
         stylePos.sort(function(b,a){return a.index - b.index})
+        var lastend = 0;
         for(var i = l; i--;){
           //console.log(stylePos[i].index);
-          descriptionStyles.push(
-            chrome.experimental.omnibox.styleMatch(predesc.length + stylePos[i].index),
-            chrome.experimental.omnibox.styleNone(predesc.length + stylePos[i].index+stylePos[i].length));
+          if(lastend < stylePos[i].index){
+            lastend = stylePos[i].index + stylePos[i].length
+
+            descriptionStyles.push(
+              chrome.experimental.omnibox.styleMatch(predesc.length + stylePos[i].index),
+              chrome.experimental.omnibox.styleNone(predesc.length + stylePos[i].index+stylePos[i].length));
+          }
         }
         
         
@@ -146,12 +151,7 @@ chrome.experimental.omnibox.onInputChanged.addListener(
       }
     }
     
-    for(var i = 0, l =matches.length; i < l; i++){
-      matches.push({ //fallback
-        content: matches[i].content,
-        description: matches[i].description
-      })
-    }
+    
     
     suggest(matches);
   });
