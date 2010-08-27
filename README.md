@@ -1,7 +1,4 @@
-http://dl.dropbox.com/u/1024307/chromesearch.crx
-
-![Screenie1](http://github.com/antimatter15/chromesearch/raw/master/Screenshots/Screenshot-1.png)
-
+[Install](http://dl.dropbox.com/u/1024307/chromesearch.crx)
 
 ![Screenie1](http://github.com/antimatter15/chromesearch/raw/master/Screenshots/Screenshot-1.png)
 
