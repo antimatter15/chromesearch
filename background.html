@@ -156,7 +156,14 @@ chrome.experimental.omnibox.onInputChanged.addListener(
     suggest(matches);
   });
 
+if(localStorage.firstRun != 'hasrun'){
+  chrome.tabs.create({
+    url: '/search.html'
+  })
+}
 
+
+localStorage.firstRun = 'hasrun';
 
 chrome.experimental.omnibox.onInputEntered.addListener(
   function(text) {

@@ -11,6 +11,7 @@
      "48": "edit-find48.png",
      "128": "edit-find128.png"
    },
+   "options_page": "search.html",
    "minimum_chrome_version": "6",
    "name": "Desktop Search",
    "permissions": [ "tabs", "unlimited_storage", "experimental" ],
