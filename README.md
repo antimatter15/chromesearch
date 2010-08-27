@@ -14,6 +14,9 @@ This is a search engine for local files made for Chrome. It's a proof of concept
 
 (You must enable experimental features!)
 
+
+###Screenshots
+
 ![Screenie1](http://github.com/antimatter15/chromesearch/raw/master/Screenshots/Screenshot-1.png)
 
 
